@@ -50,7 +50,7 @@ class ProjectItemPage extends GetView<ProjectItemController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  controller.mainPlayer.videoName,
+                  controller.videoItemList[controller.currentIndex].videoName,
                   style: const TextStyle(
                       fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
@@ -63,7 +63,8 @@ class ProjectItemPage extends GetView<ProjectItemController> {
             Container(
               padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
               child: Text(
-                controller.mainPlayer.videoDescription,
+                controller
+                    .videoItemList[controller.currentIndex].videoDescription,
                 textAlign: TextAlign.left,
                 style: const TextStyle(fontSize: 16.0),
               ),
@@ -109,47 +110,86 @@ class ProjectItemPage extends GetView<ProjectItemController> {
   Widget videoControllerBuilder() {
     return Container(
         padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-        child: Row(
+        child: Column(
           children: [
-            IconButton(
-              onPressed: (() => {
-                    controller.videoController.value.isInitialized
-                        ? controller.videoController.seekTo(Duration.zero)
-                        : // Reset video to start
-                        controller.videoController.play()
-                  }),
-              icon: const Icon(Icons.replay),
-            ),
-            const Expanded(child: Text("")),
-            Obx(() => IconButton(
-                  onPressed: () {
-                    controller.update(['project_item']);
-                    controller.videoController.value.isPlaying
-                        ? controller.videoController.pause()
-                        : controller.videoController.play();
-                  },
-                  icon: Icon(
-                    controller.videoController.value.isPlaying.obs.value
-                        ? Icons.pause
-                        : Icons.play_arrow,
+            controller.videoController.value.isInitialized
+                ? GetBuilder<ProjectItemController>(
+                    init: ProjectItemController(),
+                    id: "video_slider",
+                    builder: (_) {
+                      return Slider(
+                          value: controller.videoController.value.position
+                              .inSeconds.obs.value
+                              .toDouble(),
+                          min: 0.0,
+                          max: controller
+                              .videoController.value.duration.inSeconds
+                              .toDouble(),
+                          onChanged: ((value) {
+                            controller.videoController
+                                .seekTo(Duration(seconds: value.toInt()));
+                            controller.update(['project_item']);
+                          }));
+                    },
+                  )
+                : const Text(""),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: (() => {controller.playPreviousVideo()}),
+                  icon: const Icon(Icons.skip_previous_sharp),
+                ),
+                IconButton(
+                  onPressed: controller.togglePlayPauseBtn,
+                  icon: AnimatedIcon(
+                    icon: AnimatedIcons.pause_play,
+                    progress: controller.animationController,
                   ),
-                )),
-            IconButton(
-              onPressed: () {
-                controller.videoController.seekTo(
-                    controller.videoController.value.position +
-                        const Duration(seconds: 10));
-              },
-              icon: const Icon(Icons.forward_10),
-            ),
-            IconButton(
-              onPressed: () {
-                controller.videoController.seekTo(
-                    controller.videoController.value.position -
-                        const Duration(seconds: 10));
-              },
-              icon: const Icon(Icons.replay_10),
-            ),
+                ),
+                IconButton(
+                  onPressed: (() => {controller.playNextVideo()}),
+                  icon: const Icon(Icons.skip_next_sharp),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(24.0, 0, 8.0, 0),
+                  child: Text("自动连播"),
+                ),
+                Switch(
+                  value: controller.autoPlayNext.obs.value,
+                  onChanged: (value) {
+                    controller.autoPlayNext = value;
+                    controller.update(['project_item']);
+                  },
+                ),
+                const Expanded(child: Text("")),
+                IconButton(
+                  onPressed: () {
+                    controller.videoController.seekTo(
+                        controller.videoController.value.position +
+                            const Duration(seconds: 10));
+                  },
+                  icon: const Icon(Icons.forward_10),
+                ),
+                IconButton(
+                  onPressed: (() {
+                    if (controller.videoController.value.isInitialized) {
+                      controller.videoController
+                          .seekTo(Duration.zero); // Reset video to start
+                      controller.videoController.play();
+                    }
+                  }),
+                  icon: const Icon(Icons.replay),
+                ),
+                IconButton(
+                  onPressed: () {
+                    controller.videoController.seekTo(
+                        controller.videoController.value.position -
+                            const Duration(seconds: 10));
+                  },
+                  icon: const Icon(Icons.replay_10),
+                ),
+              ],
+            )
           ],
         ));
   }
@@ -160,10 +200,15 @@ class ProjectItemPage extends GetView<ProjectItemController> {
         : ListView(
             children: List.generate(
                 controller.videoItemList.length,
-                (index) => ProjectThumbItem(
-                      controller.videoItemList[index],
-                      playing: controller.videoItemList[index] ==
-                          controller.mainPlayer,
-                    ))));
+                (index) => GetBuilder<ProjectItemController>(
+                    init: ProjectItemController(),
+                    id: "item_list",
+                    builder: (_) {
+                      return ProjectThumbItem(
+                        controller.videoItemList[index],
+                        playing: index == controller.currentIndex,
+                        itemIndex: index,
+                      );
+                    }))));
   }
 }

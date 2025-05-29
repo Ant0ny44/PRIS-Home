@@ -152,7 +152,9 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
 class ProjectThumbItem extends StatelessWidget {
   final VideoItemEntity videoItem;
   bool playing = false;
-  ProjectThumbItem(this.videoItem, {super.key, this.playing = false});
+  late int itemIndex;
+  ProjectThumbItem(this.videoItem,
+      {super.key, this.playing = false, required this.itemIndex});
   @override
   Widget build(BuildContext context) {
     debugPrint(playing.toString());
@@ -215,24 +217,16 @@ class ProjectThumbItem extends StatelessWidget {
                   child: Column(
                     children: [
                       const Expanded(child: Text("")),
-                      IconButton(
-                        icon: const Icon(Icons.play_arrow_sharp),
-                        onPressed: () {
-                          var mainPlayerController =
-                              Get.find<ProjectItemController>();
-                          mainPlayerController.partLoading = true;
-                          mainPlayerController.mainPlayer = videoItem;
-                          mainPlayerController.update(["project_item"]);
-                          mainPlayerController.videoController =
-                              VideoPlayerController.networkUrl(
-                                  Uri.parse(videoItem.videoUrl))
-                                ..initialize().then((_) {
-                                  mainPlayerController.partLoading = false;
-                                  mainPlayerController.videoController.play();
-                                  mainPlayerController.update(["project_item"]);
-                                });
-                        },
-                      ),
+                      playing
+                          ? const Icon(Icons.ondemand_video)
+                          : IconButton(
+                              icon: const Icon(Icons.play_arrow_sharp),
+                              onPressed: () {
+                                var mainPlayerController =
+                                    Get.find<ProjectItemController>();
+                                mainPlayerController.initializeVideo(itemIndex);
+                              },
+                            ),
                     ],
                   ),
                 ),
