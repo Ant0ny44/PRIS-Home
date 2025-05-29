@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_thumbnail_video/index.dart';
 
 import 'index.dart';
 
 class ProjectThumbItem extends GetView<ProjectThumbItemController> {
   const ProjectThumbItem({super.key});
-
-  // 主视图
-  Widget _buildView() {
-    return const Center(
-      child: Text("project_thumb_item"),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,28 +15,26 @@ class ProjectThumbItem extends GetView<ProjectThumbItemController> {
       builder: (_) {
         return Card(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.work),
+                leading: GenThumbnailImage(
+                  thumbnailRequest: ThumbnailRequest(
+                    video: controller.projectVideoUrl,
+                    thumbnailPath: null,
+                    imageFormat: ImageFormat.JPEG,
+                    maxHeight: 84,
+                    maxWidth: 84,
+                    timeMs: 0,
+                    quality: 75,
+                    attachHeaders: false,
+                  ),
+                ),
                 title: Text(controller.projectName),
                 subtitle: Text(controller.projectAuthors),
                 trailing: IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   onPressed: () => {},
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  TextButton(
-                    child: const Text('More'),
-                    onPressed: () {
-                      /* ... */
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                ],
               ),
             ],
           ),

@@ -13,13 +13,16 @@ class ProjectItemPage extends GetView<ProjectItemController> {
       init: ProjectItemController(),
       id: "project_item",
       builder: (_) {
-        return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SingleChildScrollView(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [itemInfoList(), itemList()],
-            )));
+        return Expanded(
+          child: Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(child: itemInfoList()),
+              Flexible(child: itemList())
+            ],
+          ),
+        );
       },
     );
   }
@@ -55,24 +58,28 @@ class ProjectItemPage extends GetView<ProjectItemController> {
   }
 
   Widget itemInfoList() {
-    return SizedBox(
-        height: Get.height * 0.9,
-        width: Get.width * 0.4,
-        child: Column(children: [
-          itemVideoPlayer(),
-          itemTextInfo(),
-        ]));
+    return Flex(direction: Axis.vertical, children: [
+      Flexible(child: itemVideoPlayer()),
+      Flexible(child: itemTextInfo()),
+    ]);
   }
 
   Widget itemVideoPlayer() {
     return Column(
       children: [
-        Container(
-          height: Get.height * 0.3,
-          width: Get.width * 0.6,
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 4.0),
+        Expanded(
+          // width: Get.width * .3,
+          // height: Get.height * .3,
+          // padding: const EdgeInsets.fromLTRB(0, 0, 0, 4.0),
           child: controller.videoController.value.isInitialized
-              ? VideoPlayer(controller.videoController)
+              ? Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: AspectRatio(
+                    aspectRatio: controller.videoController.value.aspectRatio,
+                    // Use the VideoPlayer widget to display the video.
+                    child: VideoPlayer(controller.videoController),
+                  ),
+                )
               : const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -131,17 +138,6 @@ class ProjectItemPage extends GetView<ProjectItemController> {
   }
 
   Widget itemList() {
-    return Container(
-      height: Get.height * 0.9,
-      width: Get.width * 0.4,
-      child: GridView(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 3.3, // ratio = 宽度 / 高度
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 3,
-          ),
-          children: List.generate(100, (index) => ProjectThumbItem())),
-    );
+    return ListView(children: List.generate(5, (index) => ProjectThumbItem()));
   }
 }

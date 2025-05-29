@@ -7,7 +7,7 @@ void main() => runApp(GetMaterialApp(
       home: Home(),
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: ColorSeed.baseColor.color,
+        colorSchemeSeed: ColorSeed.blue.color,
         brightness: Brightness.light,
       ),
       translations: Messages(),

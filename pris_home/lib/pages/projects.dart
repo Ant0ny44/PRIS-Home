@@ -10,29 +10,25 @@ class ProjectsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var indexController = Get.put(HomePageIndexController());
     return Scaffold(
-      body: Container(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-          child: Expanded(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: (() =>
-                            {indexController.currentIndex.value = 0}),
-                        icon: const Icon(Icons.arrow_back)),
-                    const Expanded(child: Text("")),
-                    IconButton(
-                        onPressed: (() => {}), icon: const Icon(Icons.menu)),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-                  child: ProjectItemPage(),
-                )
-              ],
-            ),
-          )),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              IconButton(
+                  onPressed: (() => {indexController.currentIndex.value = 0}),
+                  icon: const Icon(Icons.arrow_back)),
+              const Expanded(child: Text("")),
+              Image.asset(
+                "assets/bupt_logo.png",
+                height: 64,
+              ),
+              const Expanded(child: Text("")),
+              // IconButton(onPressed: (() => {}), icon: const Icon(Icons.menu)),
+            ],
+          ),
+          ProjectItemPage(),
+        ],
+      ),
     );
   }
 }
