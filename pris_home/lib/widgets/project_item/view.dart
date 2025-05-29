@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pris_home/widgets/project_item_thumb/index.dart';
+import 'package:pris_home/widgets/project_item_thumb/view.dart';
 import 'package:video_player/video_player.dart';
 import 'index.dart';
 
@@ -13,16 +13,30 @@ class ProjectItemPage extends GetView<ProjectItemController> {
       init: ProjectItemController(),
       id: "project_item",
       builder: (_) {
-        return Expanded(
-          child: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(child: itemInfoList()),
-              Flexible(child: itemList())
-            ],
-          ),
-        );
+        return Obx(() => controller.isLoading.obs.value
+            ? const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : controller.videoItemList.isEmpty
+                ? const Expanded(
+                    child: Center(
+                      child: Row(
+                        children: [Icon(Icons.hourglass_empty), Text("暂无视频。")],
+                      ),
+                    ),
+                  )
+                : Expanded(
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(flex: 2, child: itemInfoList()),
+                        Flexible(flex: 1, child: itemList())
+                      ],
+                    ),
+                  ));
       },
     );
   }
@@ -35,9 +49,10 @@ class ProjectItemPage extends GetView<ProjectItemController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Project Title",
-                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                Text(
+                  controller.mainPlayer.videoName,
+                  style: const TextStyle(
+                      fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   onPressed: () => {},
@@ -47,10 +62,10 @@ class ProjectItemPage extends GetView<ProjectItemController> {
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-              child: const Text(
-                "Here are the details of this project. Balabala, this is a demo project to show how to use the video player in Flutter. You can play, pause, and seek through the video. Here are the details of this project. Balabala, this is a demo project to show how to use the video player in Flutter. You can play, pause, and seek through the video. Here are the details of this project. Balabala, this is a demo project to show how to use the video player in Flutter. You can play, pause, and seek through the video.",
+              child: Text(
+                controller.mainPlayer.videoDescription,
                 textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 16.0),
               ),
             ),
           ],
@@ -58,22 +73,24 @@ class ProjectItemPage extends GetView<ProjectItemController> {
   }
 
   Widget itemInfoList() {
-    return Flex(direction: Axis.vertical, children: [
-      Flexible(child: itemVideoPlayer()),
-      Flexible(child: itemTextInfo()),
-    ]);
+    return controller.partLoading.obs.value
+        ? const Center(child: CircularProgressIndicator())
+        : Flex(direction: Axis.vertical, children: [
+            Flexible(
+              flex: 2,
+              child: itemVideoPlayer(),
+            ),
+            Flexible(flex: 1, child: itemTextInfo()),
+          ]);
   }
 
   Widget itemVideoPlayer() {
     return Column(
       children: [
         Expanded(
-          // width: Get.width * .3,
-          // height: Get.height * .3,
-          // padding: const EdgeInsets.fromLTRB(0, 0, 0, 4.0),
           child: controller.videoController.value.isInitialized
               ? Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: AspectRatio(
                     aspectRatio: controller.videoController.value.aspectRatio,
                     // Use the VideoPlayer widget to display the video.
@@ -138,6 +155,15 @@ class ProjectItemPage extends GetView<ProjectItemController> {
   }
 
   Widget itemList() {
-    return ListView(children: List.generate(5, (index) => ProjectThumbItem()));
+    return Obx(() => controller.isLoading.obs.value
+        ? const Expanded(child: CircularProgressIndicator())
+        : ListView(
+            children: List.generate(
+                controller.videoItemList.length,
+                (index) => ProjectThumbItem(
+                      controller.videoItemList[index],
+                      playing: controller.videoItemList[index] ==
+                          controller.mainPlayer,
+                    ))));
   }
 }
