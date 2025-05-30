@@ -15,7 +15,9 @@ class ProjectItemController extends GetxController
   int currentIndex = 0;
   bool isLoading = true;
   bool partLoading = false;
+  double volume = 0.8;
   bool autoPlayNext = true;
+  bool windowsFullScreen = false;
   _initData() {
     update(["project_item"]);
     debugPrint('Flush');
@@ -71,6 +73,7 @@ class ProjectItemController extends GetxController
             videoController.setLooping(false);
             videoController.play();
             videoController.addListener(_videoListener);
+            videoController.setVolume(volume);
             isLoading = false;
             update(['project_item']);
           });
@@ -125,6 +128,20 @@ class ProjectItemController extends GetxController
     }
   }
 
+  void volumeUp() {
+    volume = volume >= 1.0 ? 1.0 : volume + 0.1;
+    videoController.setVolume(volume);
+
+    update(['project_item']);
+  }
+
+  void volumeDown() {
+    volume = volume <= 0 ? 0 : volume - 0.1;
+    videoController.setVolume(volume);
+
+    update(['project_item']);
+  }
+
   void playPreviousVideo() {
     currentIndex =
         (currentIndex - 1 + videoItemList.length) % videoItemList.length;
@@ -147,6 +164,7 @@ class ProjectItemController extends GetxController
         Uri.parse(videoItemList[currentIndex].videoUrl))
       ..initialize().then((_) {
         videoController.setLooping(false);
+        videoController.setVolume(volume);
         videoController.play();
         videoController.addListener(_videoListener);
         partLoading = false;

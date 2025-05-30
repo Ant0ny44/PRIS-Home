@@ -27,16 +27,18 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                       ),
                     ),
                   )
-                : Expanded(
-                    child: Flex(
-                      direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(flex: 2, child: itemInfoList()),
-                        Flexible(flex: 1, child: itemList())
-                      ],
-                    ),
-                  ));
+                : controller.windowsFullScreen
+                    ? Expanded(child: itemInfoList())
+                    : Expanded(
+                        child: Flex(
+                          direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(flex: 2, child: itemInfoList()),
+                            Flexible(flex: 1, child: itemList())
+                          ],
+                        ),
+                      ));
       },
     );
   }
@@ -81,7 +83,9 @@ class ProjectItemPage extends GetView<ProjectItemController> {
               flex: 2,
               child: itemVideoPlayer(),
             ),
-            Flexible(flex: 1, child: itemTextInfo()),
+            controller.windowsFullScreen
+                ? const Text('')
+                : Flexible(flex: 1, child: itemTextInfo()),
           ]);
   }
 
@@ -162,6 +166,51 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                   },
                 ),
                 const Expanded(child: Text("")),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.fullscreen),
+                //   tooltip: '全屏',
+                // ),
+                IconButton(
+                  onPressed: () {
+                    controller.windowsFullScreen =
+                        !controller.windowsFullScreen;
+                    controller.update(['project_item']);
+                  },
+                  icon: AnimatedSwitcher(
+                    duration: const Duration(
+                      milliseconds: 400,
+                    ),
+                    child: controller.windowsFullScreen
+                        ? const Icon(Icons.fullscreen_exit_rounded)
+                        : const Icon(Icons.fullscreen_rounded),
+                  ),
+                  tooltip: controller.windowsFullScreen ? '退出全屏' : '窗口全屏',
+                ),
+                Container(
+                  padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: controller.volumeDown,
+                        icon: const Icon(Icons.volume_down),
+                        tooltip: '降低音量',
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                        width: Get.width * 0.1,
+                        child: LinearProgressIndicator(
+                          value: controller.volume.obs.value,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: controller.volumeUp,
+                        icon: const Icon(Icons.volume_up),
+                        tooltip: '增大音量',
+                      ),
+                    ],
+                  ),
+                ),
                 IconButton(
                   onPressed: () {
                     controller.videoController.seekTo(
