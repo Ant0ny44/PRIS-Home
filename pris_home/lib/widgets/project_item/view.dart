@@ -145,10 +145,9 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                 ),
                 IconButton(
                   onPressed: controller.togglePlayPauseBtn,
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.pause_play,
-                    progress: controller.animationController,
-                  ),
+                  icon: Icon(controller.videoController.value.isPlaying
+                      ? Icons.pause_rounded
+                      : Icons.play_arrow_rounded),
                 ),
                 IconButton(
                   onPressed: (() => {controller.playNextVideo()}),
@@ -214,11 +213,12 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                 IconButton(
                   onPressed: () {
                     controller.videoController.seekTo(
-                        controller.videoController.value.position +
+                        controller.videoController.value.position -
                             const Duration(seconds: 10));
                   },
-                  icon: const Icon(Icons.forward_10),
+                  icon: const Icon(Icons.replay_10),
                 ),
+
                 IconButton(
                   onPressed: (() {
                     if (controller.videoController.value.isInitialized) {
@@ -232,10 +232,10 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                 IconButton(
                   onPressed: () {
                     controller.videoController.seekTo(
-                        controller.videoController.value.position -
+                        controller.videoController.value.position +
                             const Duration(seconds: 10));
                   },
-                  icon: const Icon(Icons.replay_10),
+                  icon: const Icon(Icons.forward_10),
                 ),
               ],
             )

@@ -71,21 +71,21 @@ class Messages extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'zh_CN': {
-          'home_title': '模式识别实验室',
+          'home_title': '来客 2.0',
           'rail_home_btn': '主页',
           'rail_groups_btn': '研究组',
           'rail_publications_btn': '论文',
           'rail_projects_btn': '项目',
-          'rail_title': '模式识别实验室',
+          'rail_title': '来客 2.0',
           'projects_page_title': '项目',
         },
         'en_US': {
-          'home_title': 'PRIS',
+          'home_title': '来客 2.0',
           'rail_home_btn': 'Home',
           'rail_groups_btn': 'Research Group',
           'rail_publications_btn': 'Publications',
           'rail_projects_btn': 'Projects',
-          'rail_title': 'PRIS',
+          'rail_title': '来客 2.0',
           'projects_page_title': 'Projects',
         }
       };
