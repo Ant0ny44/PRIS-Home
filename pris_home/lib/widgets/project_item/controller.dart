@@ -32,25 +32,34 @@ class ProjectItemController extends GetxController
 
     // Simulate fetching JSON data from the backend and parsing it.
 
-    await Future.delayed(const Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 0), () {
       List<Map<String, dynamic>> jsonResponse = [
         {
-          'videoUrl':
-              'https://github.com/Ant0ny44/PRIS-Home/raw/refs/heads/main/pris_home/assets/demo1.mp4',
-          'videoName': 'Demo Video 1',
-          'videoAuthors': 'Author A',
-          'videoDescription': 'This is the first demo video.'
-        },
-        {
-          'videoUrl':
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+          'videoUrl': 'assets/demo2.mp4',
           'videoName': 'Bee Video',
           'videoAuthors': 'Author B',
           'videoDescription': 'A video about bees.'
         },
         {
-          'videoUrl':
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+          'videoUrl': 'assets/demo3.mp4',
+          'videoName': 'Butterfly Video',
+          'videoAuthors': 'Author C',
+          'videoDescription': 'A video about butterflies.'
+        },
+        {
+          'videoUrl': 'assets/demo4.mp4',
+          'videoName': 'Butterfly Video',
+          'videoAuthors': 'Author C',
+          'videoDescription': 'A video about butterflies.'
+        },
+        {
+          'videoUrl': 'assets/demo5.mp4',
+          'videoName': 'Butterfly Video',
+          'videoAuthors': 'Author C',
+          'videoDescription': 'A video about butterflies.'
+        },
+        {
+          'videoUrl': 'assets/demo6.mp4',
           'videoName': 'Butterfly Video',
           'videoAuthors': 'Author C',
           'videoDescription': 'A video about butterflies.'
@@ -67,8 +76,7 @@ class ProjectItemController extends GetxController
       } else {
         debugPrint('Video items found, initializing with data.');
         // 默认播放第一个Card的视频。
-        videoController = VideoPlayerController.networkUrl(
-            Uri.parse(videoItemList[currentIndex].videoUrl))
+        videoController = VideoPlayerController.asset(videoItemList[0].videoUrl)
           ..initialize().then((_) {
             videoController.setLooping(false);
             videoController.play();
@@ -77,6 +85,16 @@ class ProjectItemController extends GetxController
             isLoading = false;
             update(['project_item']);
           });
+        // videoController = VideoPlayerController.networkUrl(
+        //     Uri.parse(videoItemList[currentIndex].videoUrl))
+        //   ..initialize().then((_) {
+        //     videoController.setLooping(false);
+        //     videoController.play();
+        //     videoController.addListener(_videoListener);
+        //     videoController.setVolume(volume);
+        //     isLoading = false;
+        //     update(['project_item']);
+        //   });
       }
     }); // Simulate network delay.
   }
@@ -150,6 +168,7 @@ class ProjectItemController extends GetxController
 
   void playNextVideo() {
     currentIndex = (currentIndex + 1) % videoItemList.length;
+
     initializeVideo(currentIndex);
   }
 
@@ -160,15 +179,15 @@ class ProjectItemController extends GetxController
     await videoController.dispose();
 
     currentIndex = index;
-    videoController = VideoPlayerController.networkUrl(
-        Uri.parse(videoItemList[currentIndex].videoUrl))
-      ..initialize().then((_) {
-        videoController.setLooping(false);
-        videoController.setVolume(volume);
-        videoController.play();
-        videoController.addListener(_videoListener);
-        partLoading = false;
-        update(['project_item', 'item_list']);
-      });
+    videoController =
+        VideoPlayerController.asset(videoItemList[currentIndex].videoUrl)
+          ..initialize().then((_) {
+            videoController.setLooping(false);
+            videoController.setVolume(volume);
+            videoController.play();
+            videoController.addListener(_videoListener);
+            partLoading = false;
+            update(['project_item', 'item_list']);
+          });
   }
 }

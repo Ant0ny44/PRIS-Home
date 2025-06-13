@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pris_home/widgets/project_item_thumb/view.dart';
 import 'package:video_player/video_player.dart';
+import '../../pages/homepage.dart';
 import 'index.dart';
 
 class ProjectItemPage extends GetView<ProjectItemController> {
@@ -174,6 +175,10 @@ class ProjectItemPage extends GetView<ProjectItemController> {
                   onPressed: () {
                     controller.windowsFullScreen =
                         !controller.windowsFullScreen;
+                    var navigationController =
+                        Get.find<HomePageIndexController>();
+                    navigationController.fullScreen.value =
+                        controller.windowsFullScreen;
                     controller.update(['project_item']);
                   },
                   icon: AnimatedSwitcher(

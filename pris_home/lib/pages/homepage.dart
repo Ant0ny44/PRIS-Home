@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:pris_home/pages/projects.dart';
 import 'package:pris_home/pages/publications.dart';
 
+import '../widgets/project_item/controller.dart';
 import 'groups.dart';
 
 class HomePageIndexController extends GetxController {
   var currentIndex = 0.obs;
-
+  var fullScreen = false.obs;
   void changeIndex(int index) {
     currentIndex.value = index;
   }
@@ -65,16 +66,16 @@ class Home extends StatelessWidget {
     PublicationsPage(),
     ProjectsPage()
   ];
-  var indexController = Get.put(HomePageIndexController());
   @override
   Widget build(context) {
+    var controller = Get.put(HomePageIndexController());
     return Scaffold(
       body: Row(
         children: [
-          HomepageNavigator(),
+          controller.fullScreen.value ? const Text("") : HomepageNavigator(),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
-            child: Obx(() => mainViewList[indexController.currentIndex.value]),
+            child: Obx(() => mainViewList[controller.currentIndex.value]),
           ),
         ],
       ),

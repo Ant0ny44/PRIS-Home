@@ -178,7 +178,9 @@ class ProjectThumbItem extends StatelessWidget {
                     builder: (context, constraints) {
                       return GenThumbnailImage(
                         thumbnailRequest: ThumbnailRequest(
-                          video: videoItem.videoUrl,
+                          video: videoItem.videoUrl.startsWith("http")
+                              ? videoItem.videoUrl
+                              : "assets/${videoItem.videoUrl}",
                           thumbnailPath: null,
                           imageFormat: ImageFormat.JPEG,
                           maxHeight: (constraints.maxHeight * 0.85).toInt(),
